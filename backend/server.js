@@ -16,9 +16,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173' }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// At the top, add this to store extracted text temporarily
+let lastExtractedText = null;
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -161,7 +165,8 @@ app.post('/api/extract-text', upload.single('image'), async (req, res) => {
 
     // Parse warranty information
     const extractedData = parseWarrantyInfo(text);
-
+    // Save text for /display
+    lastExtractedText = text.trim();
     console.log('Text extracted successfully');
     console.log('Extracted text length:', text.length);
 
@@ -261,6 +266,21 @@ app.post('/api/extract-text-enhanced', upload.single('image'), async (req, res) 
       details: error.message
     });
   }
+});
+
+// New route to display extracted text
+app.get('/display', (req, res) => {
+  if (!lastExtractedText) {
+    return res.send('<h2>No extracted text yet. Upload a file first.</h2>');
+  }
+
+  res.send(`
+    <h1>Extracted Text</h1>
+    <pre style="white-space: pre-wrap; word-wrap: break-word; font-family: monospace;">
+${lastExtractedText}
+    </pre>
+    <a href="/">Go Back</a>
+  `);
 });
 
 // Error handling middleware

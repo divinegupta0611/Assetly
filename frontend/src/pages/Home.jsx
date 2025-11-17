@@ -15,13 +15,36 @@ export default function AssetlyHomepage() {
     cameraInputRef.current?.click();
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      console.log('File selected:', file.name);
-      // Handle file upload logic here
+const handleFileChange = async (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  console.log('File selected:', file.name);
+
+  // Prepare FormData
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const response = await fetch('http://localhost:5000/api/extract-text', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      console.log('Extracted Text:', result.text);
+      // Redirect to /display page
+      window.location.href = 'http://localhost:5000/display';
+    } else {
+      alert('Failed to extract text: ' + result.error);
     }
-  };
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    alert('Error uploading file. Check console.');
+  }
+};
+
 
   return (
     <div className="assetly-container">
