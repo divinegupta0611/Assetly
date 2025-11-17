@@ -1,0 +1,180 @@
+/* Navigation Bar */
+.navbar {
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-brand {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #00897b;
+  letter-spacing: 1px;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.navbar-link {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.logout-link {
+  background: none;
+  border: none;
+  color: #333;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 1rem;
+  transition: color 0.3s;
+}
+
+.logout-link:hover {
+  color: #00897b;
+  text-decoration: none;
+}
+
+.navbar-link:hover {
+  color: #00897b;
+}
+
+.user-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00897b 0%, #26a69a 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.user-circle:hover {
+  transform: scale(1.1);
+}
+
+/* Highlight active link */
+.navbar-link.active {
+  background-color: #00897b;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+/* Hamburger Menu - Hidden by default */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background-color: #00897b;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+
+/* --------------------- RESPONSIVE STYLES --------------------- */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem 1.5rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.5rem;
+  }
+
+  /* Show hamburger menu */
+  .hamburger {
+    display: flex;
+  }
+
+  /* Hide menu by default on mobile */
+  .navbar-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Show menu when active */
+  .navbar-menu.active {
+    max-height: 500px;
+    padding: 1rem 0;
+  }
+
+  .navbar-link,
+  .logout-link {
+    width: 100%;
+    text-align: left;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    margin: 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .navbar-link.active {
+    background-color: #00897b;
+    color: white;
+    border-radius: 0;
+  }
+
+  .user-circle {
+    margin: 1rem 2rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .logout-link {
+    border-bottom: 1px solid #f0f0f0;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.8rem 1rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+
+  .navbar-link,
+  .logout-link {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
