@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Camera, Upload, Info, Shield, Bell, FileText } from 'lucide-react';
 import '../style/HomeCSS.css'
 import NavBar from '../components/NavBar.jsx';
@@ -6,6 +6,13 @@ import NavBar from '../components/NavBar.jsx';
 export default function AssetlyHomepage() {
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+  const [user, setUser] = useState(null);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) setUser(JSON.parse(storedUser));
+  }, []);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -15,40 +22,37 @@ export default function AssetlyHomepage() {
     cameraInputRef.current?.click();
   };
 
-const handleFileChange = async (e) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  console.log('File selected:', file.name);
+    console.log('File selected:', file.name);
 
-  // Prepare FormData
-  const formData = new FormData();
-  formData.append('image', file);
+    const formData = new FormData();
+    formData.append('image', file);
 
-  try {
-    const response = await fetch('http://localhost:5000/api/extract-text', {
-      method: 'POST',
-      body: formData
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/extract-text', {
+        method: 'POST',
+        body: formData
+      });
 
-    const result = await response.json();
-    if (result.success) {
-      console.log('Extracted Text:', result.text);
-      // Redirect to /display page
-      window.location.href = 'http://localhost:5000/display';
-    } else {
-      alert('Failed to extract text: ' + result.error);
+      const result = await response.json();
+      if (result.success) {
+        console.log('Extracted Text:', result.text);
+      } else {
+        alert('Failed to extract text: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Error uploading file. Check console.');
     }
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    alert('Error uploading file. Check console.');
-  }
-};
-
+  };
 
   return (
     <div className="assetly-container">
       <NavBar />
+
       {/* Hero Section */}
       <section className="hero-section">
         <h1 className="hero-title">Never Miss a Warranty Again</h1>
@@ -57,33 +61,41 @@ const handleFileChange = async (e) => {
           Get notified before warranties expire and manage all your assets in one place.
         </p>
 
-        <div className="upload-section">
-          <div className="upload-button" onClick={handleCameraClick}>
-            <Camera size={48} className="upload-icon" />
-            <span className="upload-text">Take Photo</span>
-            <span className="upload-subtext">Capture with camera</span>
-          </div>
+        {/* Show upload buttons ONLY if user is logged in */}
+        {user && (
+          <div className="upload-section">
+            <div className="upload-button" onClick={handleCameraClick}>
+              <Camera size={48} className="upload-icon" />
+              <span className="upload-text">Take Photo</span>
+              <span className="upload-subtext">Capture with camera</span>
+            </div>
 
-          <div className="upload-button" onClick={handleUploadClick}> 
-            <Upload size={48} className="upload-icon" />
-            <span className="upload-text">Upload Photo</span>
-            <span className="upload-subtext">Choose from gallery</span>
-          </div>
+            <div className="upload-button" onClick={handleUploadClick}> 
+              <Upload size={48} className="upload-icon" />
+              <span className="upload-text">Upload Photo</span>
+              <span className="upload-subtext">Choose from gallery</span>
+            </div>
 
-          <input
-            ref={cameraInputRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handleFileChange}
-          />
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </div>
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleFileChange}
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </div>
+        )}
+        {!user && (
+          <p style={{ marginTop: '1rem', color: '#555' }}>
+            Please log in to upload or capture bills.
+          </p>
+        )}
       </section>
 
       {/* Info Section */}
@@ -187,3 +199,5 @@ const handleFileChange = async (e) => {
     </div>
   );
 }
+
+
